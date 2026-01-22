@@ -195,7 +195,7 @@ export default function NavbarHero() {
       </nav>
 
       {/* ================= HERO ================= */}
-      <section className="relative h-[570px] lg:h-[570px] md:h-[500px] sm:h-[300px] w-full">
+      <section className="relative h-[450px] lg:h-[450px] md:h-[350px] sm:h-[300px] w-full">
         <div
           className="absolute inset-0 bg-cover"
           style={{ backgroundImage: "url('/banner.webp')" }}
