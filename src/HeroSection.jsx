@@ -61,7 +61,7 @@ export default function NavbarHero() {
                 </a>
               </li>
               <li className="flex items-center">
-                <a href="https://skyproaviation.org/admission-form" className={isActive('/admission-form') ? 'text-[#003366]' : 'hover:text-[#003366]'}>
+                <a href="https://admissions.skyproaviation.org/" className={isActive('/admission-form') ? 'text-[#003366]' : 'hover:text-[#003366]'}>
                   Admission Form
                 </a>
               </li>
@@ -161,7 +161,7 @@ export default function NavbarHero() {
                   </a>
                 </li>
                 <li>
-                  <a href="/admission-form" className={isActive('/admission-form') ? 'text-[#003366]' : ''}>
+                  <a href="https://admissions.skyproaviation.org/" className={isActive('/admission-form') ? 'text-[#003366]' : ''}>
                     Admission Form
                   </a>
                 </li>
