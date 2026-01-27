@@ -1,4 +1,4 @@
-// import { useState } from "react";
+// import { useState, useEffect } from "react";
 // import axios from "axios";
 
 // export default function App() {
@@ -34,9 +34,27 @@
 //   const [fileErrors, setFileErrors] = useState({});
 //   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
 //   const [sameAddress, setSameAddress] = useState(false);
+//   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
 
-//   // Get API URL from environment variable
+//   // IMPORTANT: Replace with your actual reCAPTCHA Site Key
+//   const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY; // Replace with your key
 //   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+//   // Load reCAPTCHA script
+//   useEffect(() => {
+//     const script = document.createElement("script");
+//     script.src = "https://www.google.com/recaptcha/api.js";
+//     script.async = true;
+//     script.defer = true;
+//     script.onload = () => setRecaptchaLoaded(true);
+//     document.body.appendChild(script);
+
+//     return () => {
+//       if (document.body.contains(script)) {
+//         document.body.removeChild(script);
+//       }
+//     };
+//   }, []);
 
 //   const paymentOptions = [
 //     { value: "", label: "Select Payment Mode" },
@@ -122,12 +140,21 @@
 //       return;
 //     }
 
+//     // Get reCAPTCHA token
+//     const token = window.grecaptcha?.getResponse();
+
+//     if (!token) {
+//       setStatus("❌ Please complete the reCAPTCHA verification");
+//       return;
+//     }
+
 //     setLoading(true);
 //     setStatus("");
 
 //     const formData = new FormData();
 //     Object.keys(form).forEach((key) => formData.append(key, form[key]));
 //     Object.keys(files).forEach((key) => formData.append(key, files[key]));
+//     formData.append("recaptchaToken", token);
 
 //     try {
 //       await Promise.all([
@@ -143,9 +170,11 @@
 //       setFileErrors({});
 //       setDisclaimerAccepted(false);
 //       setSameAddress(false);
+//       window.grecaptcha?.reset();
 //       e.target.reset();
 //     } catch (err) {
 //       setStatus(`❌ ${err.response?.data?.error || "Submission failed"}`);
+//       window.grecaptcha?.reset();
 //     } finally {
 //       setLoading(false);
 //     }
@@ -298,7 +327,6 @@
 //                 />
 //               </div>
 
-//               {/* Permanent Address */}
 //               <div className="md:col-span-2">
 //                 <label className="block text-lg font-bold text-gray-700 mb-2">
 //                   Permanent Address<span className="text-red-500">*</span>
@@ -314,7 +342,6 @@
 //                 />
 //               </div>
 
-//               {/* Same as Permanent Address Checkbox */}
 //               <div className="md:col-span-2 -mt-4 -mb-4">
 //                 <label className="flex items-center">
 //                   <input
@@ -329,7 +356,6 @@
 //                 </label>
 //               </div>
 
-//               {/* Current Address */}
 //               <div className="md:col-span-2">
 //                 <label className="block text-lg font-bold text-gray-700 mb-2">
 //                   Current Address<span className="text-red-500">*</span>
@@ -346,7 +372,7 @@
 //                 />
 //               </div>
 
-//               <div>
+//               {/* <div>
 //                 <label className="block text-lg font-bold text-gray-700 mb-2">
 //                   DGCA Computer Number
 //                 </label>
@@ -367,7 +393,38 @@
 //                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
 //                   onChange={handleChange}
 //                 />
+//               </div> */}
+
+//               <div>
+//                 <label className="block text-lg font-bold text-gray-700 mb-2">
+//                   DGCA Computer Number
+//                   <span className="text-sm font-normal text-gray-500 ml-2">
+//                     (leave blank if not applicable)
+//                   </span>
+//                 </label>
+//                 <input
+//                   name="dgca"
+//                   placeholder="Enter DGCA number"
+//                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
+//                   onChange={handleChange}
+//                 />
 //               </div>
+
+//               <div>
+//                 <label className="block text-lg font-bold text-gray-700 mb-2">
+//                   eGCA Number
+//                   <span className="text-sm font-normal text-gray-500 ml-2">
+//                     (leave blank if not applicable)
+//                   </span>
+//                 </label>
+//                 <input
+//                   name="egca"
+//                   placeholder="Enter eGCA number"
+//                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
+//                   onChange={handleChange}
+//                 />
+//               </div>
+
 //               <div className="md:col-span-2">
 //                 <label className="block text-lg font-bold text-gray-700 mb-2">
 //                   Medical Status<span className="text-red-500">*</span>
@@ -489,7 +546,7 @@
 //           {/* 3. Academic Details */}
 //           <section className="mb-12">
 //             <h3
-//               className="text-2xl font-bold text-gray-900 mb-3 pb-3 "
+//               className="text-2xl font-bold text-gray-900 mb-3 pb-3"
 //               style={{ color: "#003366" }}
 //             >
 //               3. Academic Details
@@ -503,37 +560,42 @@
 //                   name="school"
 //                   placeholder="Institution name"
 //                   type="text"
-//                   inputMode="text"
-//                   pattern="[A-Za-z\s]+"
-//                   title="Only alphabets allowed"
-//                   onInput={(e) =>
-//                     (e.target.value = e.target.value.replace(
-//                       /[^A-Za-z\s]/g,
-//                       "",
-//                     ))
-//                   }
 //                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
 //                   required
 //                   onChange={handleChange}
 //                 />
 //               </div>
-//               <div>
+//               {/* <div>
 //                 <label className="block text-lg font-bold text-gray-700 mb-2">
 //                   Current Class/Year
 //                 </label>
 //                 <input
 //                   name="classYear"
 //                   type="text"
-//                   inputMode="numeric"
-//                   pattern="[0-9]*"
 //                   placeholder="Class 12 / 2026"
 //                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
-//                   onInput={(e) =>
-//                     (e.target.value = e.target.value.replace(/\D/g, ""))
-//                   }
 //                   onChange={handleChange}
 //                 />
+//               </div> */}
+//               <div>
+//                 <label className="block text-lg font-bold text-gray-700 mb-2">
+//                   Current Education Qualification
+//                 </label>
+
+//                 <select
+//                   name="classYear"
+//                   defaultValue=""
+//                   onChange={handleChange}
+//                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200 bg-white"
+//                 >
+//                   <option value="">— Please choose an option —</option>
+//                   <option value="Class 10">Class 10</option>
+//                   <option value="12th Appearing">12th Appearing</option>
+//                   <option value="12th Passed">12th Passed</option>
+//                   <option value="Graduation 1st Year">Graduation</option>
+//                 </select>
 //               </div>
+
 //               <div>
 //                 <label className="block text-lg font-bold text-gray-700 mb-2">
 //                   Board/University<span className="text-red-500">*</span>
@@ -542,15 +604,6 @@
 //                   name="board"
 //                   placeholder="CBSE/ICSE/State Board"
 //                   type="text"
-//                   inputMode="text"
-//                   pattern="[A-Za-z\s]+"
-//                   title="Only alphabets allowed"
-//                   onInput={(e) =>
-//                     (e.target.value = e.target.value.replace(
-//                       /[^A-Za-z\s]/g,
-//                       "",
-//                     ))
-//                   }
 //                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
 //                   required
 //                   onChange={handleChange}
@@ -559,6 +612,7 @@
 //             </div>
 //           </section>
 
+//           {/* 4. Course Details */}
 //           <section className="mb-12">
 //             <h3
 //               className="text-2xl font-bold text-gray-900 mb-3 pb-3"
@@ -593,21 +647,21 @@
 //                     <input
 //                       type="radio"
 //                       name="modeOfClass"
-//                       value="Physical Lecture"
+//                       value="Online Class"
 //                       className="mr-2 text-blue-500 focus:ring-blue-300"
 //                       onChange={handleChange}
 //                     />
-//                     Physical Lecture
+//                     Online Class
 //                   </label>
 //                   <label className="flex items-center">
 //                     <input
 //                       type="radio"
 //                       name="modeOfClass"
-//                       value="Virtual Lecture"
+//                       value="Offline Class"
 //                       className="mr-2 text-blue-500 focus:ring-blue-300"
 //                       onChange={handleChange}
 //                     />
-//                     Virtual Lecture
+//                     Offline Class
 //                   </label>
 //                 </div>
 //               </div>
@@ -782,6 +836,19 @@
 //             </div>
 //           </section>
 
+//           {/* reCAPTCHA Section */}
+//           <section className="mb-8">
+//             <div className="flex justify-center">
+//               <div className="g-recaptcha" data-sitekey={siteKey}></div>
+//             </div>
+//             {!recaptchaLoaded && (
+//               <p className="text-center text-gray-500 text-sm mt-2">
+//                 Loading security verification...
+//               </p>
+//             )}
+//           </section>
+
+//           {/* Submit Button */}
 //           <button
 //             type="submit"
 //             disabled={loading || !disclaimerAccepted}
@@ -794,6 +861,18 @@
 //     </div>
 //   );
 // }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -854,16 +933,16 @@ export default function App() {
   const [fileErrors, setFileErrors] = useState({});
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [sameAddress, setSameAddress] = useState(false);
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  // const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
 
   // IMPORTANT: Replace with your actual reCAPTCHA Site Key
   const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY; // Replace with your key
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  
+
   // Load reCAPTCHA script
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "https://www.google.com/recaptcha/api.js";
+    script.src = "https://www.google.com/recaptcha/api.js"; 
     script.async = true;
     script.defer = true;
     script.onload = () => setRecaptchaLoaded(true);
@@ -926,10 +1005,10 @@ export default function App() {
     setFileErrors((prev) => ({ ...prev, [fieldName]: "" }));
 
     if (file) {
-      const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+      const validTypes = ["image/png", "image/jpeg", "image/jpg", "application/pdf"];
 
       if (!validTypes.includes(file.type)) {
-        const errorMsg = `Only PNG and JPEG images are allowed for ${fieldName}`;
+        const errorMsg = `Only PNG, JPEG, and PDF files are allowed for ${fieldName}`;
         setFileErrors((prev) => ({ ...prev, [fieldName]: errorMsg }));
         setStatus(`❌ ${errorMsg}`);
         e.target.value = "";
@@ -962,7 +1041,7 @@ export default function App() {
 
     // Get reCAPTCHA token
     const token = window.grecaptcha?.getResponse();
-    
+
     if (!token) {
       setStatus("❌ Please complete the reCAPTCHA verification");
       return;
@@ -974,7 +1053,7 @@ export default function App() {
     const formData = new FormData();
     Object.keys(form).forEach((key) => formData.append(key, form[key]));
     Object.keys(files).forEach((key) => formData.append(key, files[key]));
-    formData.append("recaptchaToken", token);
+     formData.append("recaptchaToken", token);
 
     try {
       await Promise.all([
@@ -1004,7 +1083,10 @@ export default function App() {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-5xl font-bold mb-2" style={{ color: "black" }}>
+          <h2
+            className="text-3xl sm:text-5xl font-bold mb-2"
+            style={{ color: "black" }}
+          >
             STUDENT ADMISSION FORM
           </h2>
           <p className="text-xl font-bold" style={{ color: "#f4b221" }}>
@@ -1012,20 +1094,28 @@ export default function App() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white shadow-2xl rounded-3xl p-8 sm:p-12 border border-gray-200">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white shadow-2xl rounded-3xl p-8 sm:p-12 border border-gray-200"
+        >
           {status && (
-            <div className={`mb-8 p-4 rounded-2xl text-center font-medium text-lg ${
+            <div
+              className={`mb-8 p-4 rounded-2xl text-center font-medium text-lg ${
                 status.includes("successfully")
                   ? "bg-green-100 text-green-800 border-2 border-green-200"
                   : "bg-red-100 text-red-800 border-2 border-red-200"
-              }`}>
+              }`}
+            >
               {status}
             </div>
           )}
 
           {/* 1. Student Details */}
           <section className="mb-12">
-            <h3 className="text-2xl font-bold mb-3 pb-3" style={{ color: "#003366" }}>
+            <h3
+              className="text-2xl font-bold mb-3 pb-3"
+              style={{ color: "#003366" }}
+            >
               1. Student Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1039,7 +1129,12 @@ export default function App() {
                   inputMode="text"
                   pattern="[A-Za-z\s]+"
                   title="Only alphabets allowed"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, ""))}
+                  onInput={(e) =>
+                    (e.target.value = e.target.value.replace(
+                      /[^A-Za-z\s]/g,
+                      "",
+                    ))
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   onChange={handleChange}
                   required
@@ -1063,15 +1158,36 @@ export default function App() {
                 </label>
                 <div className="flex space-x-6 mt-2">
                   <label className="flex items-center">
-                    <input type="radio" name="gender" value="Male" className="mr-2 text-blue-500 focus:ring-blue-300" required onChange={handleChange} />
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="Male"
+                      className="mr-2 text-blue-500 focus:ring-blue-300"
+                      required
+                      onChange={handleChange}
+                    />
                     Male
                   </label>
                   <label className="flex items-center">
-                    <input type="radio" name="gender" value="Female" className="mr-2 text-blue-500 focus:ring-blue-300" required onChange={handleChange} />
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="Female"
+                      className="mr-2 text-blue-500 focus:ring-blue-300"
+                      required
+                      onChange={handleChange}
+                    />
                     Female
                   </label>
                   <label className="flex items-center">
-                    <input type="radio" name="gender" value="Prefer not to say" className="mr-2 text-blue-500 focus:ring-blue-300" required onChange={handleChange} />
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="Prefer not to say"
+                      className="mr-2 text-blue-500 focus:ring-blue-300"
+                      required
+                      onChange={handleChange}
+                    />
                     Prefer not to say
                   </label>
                 </div>
@@ -1088,7 +1204,9 @@ export default function App() {
                   pattern="[0-9]{10}"
                   maxLength={10}
                   title="Enter a valid 10-digit mobile number"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                  onInput={(e) =>
+                    (e.target.value = e.target.value.replace(/\D/g, ""))
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   required
                   onChange={handleChange}
@@ -1152,10 +1270,12 @@ export default function App() {
                   disabled={sameAddress}
                 />
               </div>
-
               <div>
                 <label className="block text-lg font-bold text-gray-700 mb-2">
                   DGCA Computer Number
+                  <span className="text-sm font-normal text-gray-500 ml-2">
+                    (leave blank if not applicable)
+                  </span>
                 </label>
                 <input
                   name="dgca"
@@ -1164,9 +1284,13 @@ export default function App() {
                   onChange={handleChange}
                 />
               </div>
+
               <div>
                 <label className="block text-lg font-bold text-gray-700 mb-2">
                   eGCA Number
+                  <span className="text-sm font-normal text-gray-500 ml-2">
+                    (leave blank if not applicable)
+                  </span>
                 </label>
                 <input
                   name="egca"
@@ -1175,6 +1299,7 @@ export default function App() {
                   onChange={handleChange}
                 />
               </div>
+
               <div className="md:col-span-2">
                 <label className="block text-lg font-bold text-gray-700 mb-2">
                   Medical Status<span className="text-red-500">*</span>
@@ -1197,7 +1322,10 @@ export default function App() {
 
           {/* 2. Parent / Guardian Details */}
           <section className="mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-3 pb-3" style={{ color: "#003366" }}>
+            <h3
+              className="text-2xl font-bold text-gray-900 mb-3 pb-3"
+              style={{ color: "#003366" }}
+            >
               2. Parent / Guardian Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1212,7 +1340,12 @@ export default function App() {
                   inputMode="text"
                   pattern="[A-Za-z\s]+"
                   title="Only alphabets allowed"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, ""))}
+                  onInput={(e) =>
+                    (e.target.value = e.target.value.replace(
+                      /[^A-Za-z\s]/g,
+                      "",
+                    ))
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   required
                   onChange={handleChange}
@@ -1228,7 +1361,12 @@ export default function App() {
                   inputMode="text"
                   pattern="[A-Za-z\s]+"
                   title="Only alphabets allowed"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, ""))}
+                  onInput={(e) =>
+                    (e.target.value = e.target.value.replace(
+                      /[^A-Za-z\s]/g,
+                      "",
+                    ))
+                  }
                   placeholder="Father/Mother/Guardian"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   required
@@ -1247,7 +1385,9 @@ export default function App() {
                   pattern="[0-9]{10}"
                   maxLength={10}
                   title="Enter a valid 10-digit mobile number"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                  onInput={(e) =>
+                    (e.target.value = e.target.value.replace(/\D/g, ""))
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   required
                   onChange={handleChange}
@@ -1264,7 +1404,12 @@ export default function App() {
                   inputMode="text"
                   pattern="[A-Za-z\s]+"
                   title="Only alphabets allowed"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, ""))}
+                  onInput={(e) =>
+                    (e.target.value = e.target.value.replace(
+                      /[^A-Za-z\s]/g,
+                      "",
+                    ))
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   required
                   onChange={handleChange}
@@ -1275,7 +1420,10 @@ export default function App() {
 
           {/* 3. Academic Details */}
           <section className="mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-3 pb-3" style={{ color: "#003366" }}>
+            <h3
+              className="text-2xl font-bold text-gray-900 mb-3 pb-3"
+              style={{ color: "#003366" }}
+            >
               3. Academic Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1287,10 +1435,6 @@ export default function App() {
                   name="school"
                   placeholder="Institution name"
                   type="text"
-                  inputMode="text"
-                  pattern="[A-Za-z\s]+"
-                  title="Only alphabets allowed"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, ""))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   required
                   onChange={handleChange}
@@ -1298,19 +1442,23 @@ export default function App() {
               </div>
               <div>
                 <label className="block text-lg font-bold text-gray-700 mb-2">
-                  Current Class/Year
+                  Current Educational Qualification
                 </label>
-                <input
+
+                <select
                   name="classYear"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  placeholder="Class 12 / 2026"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                  defaultValue=""
                   onChange={handleChange}
-                />
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200 bg-white"
+                >
+                  <option value="">— Please choose an option —</option>
+                  <option value="Class 10">Class 10</option>
+                  <option value="12th Appearing">12th Appearing</option>
+                  <option value="12th Passed">12th Passed</option>
+                  <option value="Graduation 1st Year">Graduation</option>
+                </select>
               </div>
+
               <div>
                 <label className="block text-lg font-bold text-gray-700 mb-2">
                   Board/University<span className="text-red-500">*</span>
@@ -1319,10 +1467,6 @@ export default function App() {
                   name="board"
                   placeholder="CBSE/ICSE/State Board"
                   type="text"
-                  inputMode="text"
-                  pattern="[A-Za-z\s]+"
-                  title="Only alphabets allowed"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, ""))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   required
                   onChange={handleChange}
@@ -1333,7 +1477,10 @@ export default function App() {
 
           {/* 4. Course Details */}
           <section className="mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-3 pb-3" style={{ color: "#003366" }}>
+            <h3
+              className="text-2xl font-bold text-gray-900 mb-3 pb-3"
+              style={{ color: "#003366" }}
+            >
               4. Course Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1360,12 +1507,24 @@ export default function App() {
                 </label>
                 <div className="flex space-x-6 mt-2">
                   <label className="flex items-center">
-                    <input type="radio" name="modeOfClass" value="Physical Lecture" className="mr-2 text-blue-500 focus:ring-blue-300" onChange={handleChange} />
-                    Physical Lecture
+                    <input
+                      type="radio"
+                      name="modeOfClass"
+                      value="Online Class"
+                      className="mr-2 text-blue-500 focus:ring-blue-300"
+                      onChange={handleChange}
+                    />
+                    Online Class
                   </label>
                   <label className="flex items-center">
-                    <input type="radio" name="modeOfClass" value="Virtual Lecture" className="mr-2 text-blue-500 focus:ring-blue-300" onChange={handleChange} />
-                    Virtual Lecture
+                    <input
+                      type="radio"
+                      name="modeOfClass"
+                      value="Offline Class"
+                      className="mr-2 text-blue-500 focus:ring-blue-300"
+                      onChange={handleChange}
+                    />
+                    Offline Class
                   </label>
                 </div>
               </div>
@@ -1374,7 +1533,10 @@ export default function App() {
 
           {/* 5. Fee Structure */}
           <section className="mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-3 pb-3" style={{ color: "#003366" }}>
+            <h3
+              className="text-2xl font-bold text-gray-900 mb-3 pb-3"
+              style={{ color: "#003366" }}
+            >
               5. Fee Structure
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1384,11 +1546,25 @@ export default function App() {
                 </label>
                 <div className="flex space-x-6 mt-2">
                   <label className="flex items-center">
-                    <input type="radio" name="feesPaid" value="Yes" className="mr-2 text-blue-500 focus:ring-blue-300" required onChange={handleChange} />
+                    <input
+                      type="radio"
+                      name="feesPaid"
+                      value="Yes"
+                      className="mr-2 text-blue-500 focus:ring-blue-300"
+                      required
+                      onChange={handleChange}
+                    />
                     Yes
                   </label>
                   <label className="flex items-center">
-                    <input type="radio" name="feesPaid" value="No" className="mr-2 text-blue-500 focus:ring-blue-300" required onChange={handleChange} />
+                    <input
+                      type="radio"
+                      name="feesPaid"
+                      value="No"
+                      className="mr-2 text-blue-500 focus:ring-blue-300"
+                      required
+                      onChange={handleChange}
+                    />
                     No
                   </label>
                 </div>
@@ -1402,11 +1578,25 @@ export default function App() {
                     </label>
                     <div className="flex space-x-6 mt-2">
                       <label className="flex items-center">
-                        <input type="radio" name="installment" value="Yes" className="mr-2 text-blue-500 focus:ring-blue-300" required onChange={handleChange} />
+                        <input
+                          type="radio"
+                          name="installment"
+                          value="Yes"
+                          className="mr-2 text-blue-500 focus:ring-blue-300"
+                          required
+                          onChange={handleChange}
+                        />
                         Yes
                       </label>
                       <label className="flex items-center">
-                        <input type="radio" name="installment" value="No" className="mr-2 text-blue-500 focus:ring-blue-300" required onChange={handleChange} />
+                        <input
+                          type="radio"
+                          name="installment"
+                          value="No"
+                          className="mr-2 text-blue-500 focus:ring-blue-300"
+                          required
+                          onChange={handleChange}
+                        />
                         No
                       </label>
                     </div>
@@ -1435,11 +1625,14 @@ export default function App() {
 
           {/* 6. Documents Submitted */}
           <section className="mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-3 pb-3" style={{ color: "#003366" }}>
+            <h3
+              className="text-2xl font-bold text-gray-900 mb-3 pb-3"
+              style={{ color: "#003366" }}
+            >
               6. Documents Submitted
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              Only PNG and JPEG formats are accepted (Max 2MB per file)
+              PNG, JPEG, and PDF formats are accepted (Max 2MB per file)
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
@@ -1457,18 +1650,24 @@ export default function App() {
                   <input
                     type="file"
                     name={field.name}
-                    accept="image/png, image/jpeg, image/jpg"
+                    accept="image/png, image/jpeg, image/jpg, application/pdf"
                     className={`w-full px-4 py-3 border-2 border-dashed rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 ${
-                      fileErrors[field.name] ? "border-red-400 bg-red-50" : "border-gray-300"
+                      fileErrors[field.name]
+                        ? "border-red-400 bg-red-50"
+                        : "border-gray-300"
                     }`}
                     required
                     onChange={handleFile}
                   />
                   {fileErrors[field.name] && (
-                    <p className="text-red-600 text-sm mt-1">{fileErrors[field.name]}</p>
+                    <p className="text-red-600 text-sm mt-1">
+                      {fileErrors[field.name]}
+                    </p>
                   )}
                   {files[field.name] && !fileErrors[field.name] && (
-                    <p className="text-green-600 text-sm mt-1">✓ {files[field.name].name}</p>
+                    <p className="text-green-600 text-sm mt-1">
+                      ✓ {files[field.name].name}
+                    </p>
                   )}
                 </div>
               ))}
