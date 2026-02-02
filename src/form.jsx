@@ -66,18 +66,23 @@ export default function App() {
 
   const medicalOptions = [
     { value: "", label: "Select Medical Status" },
-    { value: "N/A", label: "N/A" },
     { value: "Medical Class 1", label: "Medical Class 1" },
     { value: "Medical Class 2", label: "Medical Class 2" },
+    { value: "N/A", label: "N/A" },
   ];
 
   const courseOptions = [
     { value: "", label: "Select Course" },
     { value: "DGCA Ground Classes", label: "DGCA Ground Classes" },
     { value: "ATPL Theory Training", label: "ATPL Theory Training" },
-    { value: "Flight Training", label: "Flight Training" },
-    { value: "Type Rating", label: "Type Rating" },
-    // { value: "Licence Conversion", label: "Licence Conversion" },
+    { value: "CPL Flying Training", label: "CPL Flying Training" },
+    { value: "Assistant Flight Instructor Rating", label: "Assistant Flight Instructor Rating" },
+    { value: "Type Rating Courses", label: "Type Rating Courses" },
+    { value: "Airline Preparatory Training", label: "Airline Preparatory Training" },
+    { value: "ADAPT Training", label: "ADAPT Training" },
+    { value: "Drone Pilot License Training", label: "Drone Pilot License Training" },
+    { value: "Cabin Crew Training", label: "Cabin Crew Training" },
+    { value: "Airport Agent Diploma Training", label: "Airport Agent Diploma Training" },
     { value: "Mentorship Programme", label: "Mentorship Programme" },
   ];
 
@@ -280,17 +285,6 @@ export default function App() {
                     />
                     Female
                   </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="Prefer not to say"
-                      className="mr-2 text-blue-500 focus:ring-blue-300"
-                      required
-                      onChange={handleChange}
-                    />
-                    Prefer not to say
-                  </label>
                 </div>
               </div>
               <div>
@@ -375,7 +369,7 @@ export default function App() {
                 <label className="block text-lg font-bold text-gray-700 mb-2">
                   DGCA Computer Number
                   <span className="text-sm font-normal text-gray-500 ml-2">
-                    (leave blank if not applicable)
+                    (Leave Blank if Not Applicable)
                   </span>
                 </label>
                 <input
@@ -390,7 +384,7 @@ export default function App() {
                 <label className="block text-lg font-bold text-gray-700 mb-2">
                   eGCA Number
                   <span className="text-sm font-normal text-gray-500 ml-2">
-                    (leave blank if not applicable)
+                    (Leave Blank if Not Applicable)
                   </span>
                 </label>
                 <input
@@ -427,7 +421,7 @@ export default function App() {
               className="text-2xl font-bold text-gray-900 mb-3 pb-3"
               style={{ color: "#003366" }}
             >
-              2. Parent / Guardian Details
+              2. Parent/Guardian Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -556,7 +550,8 @@ export default function App() {
                   <option value="Class 10">Class 10</option>
                   <option value="12th Appearing">12th Appearing</option>
                   <option value="12th Passed">12th Passed</option>
-                  <option value="Graduation 1st Year">Graduation</option>
+                  <option value="Graduation">Graduation</option>
+                  <option value="Post Graduation">Post Graduation</option>
                 </select>
               </div>
 
@@ -587,7 +582,7 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-lg font-bold text-gray-700 mb-2">
-                  Course Name<span className="text-red-500">*</span>
+                  Course Applied For<span className="text-red-500">*</span>
                 </label>
                 <select
                   name="course"
@@ -675,7 +670,7 @@ export default function App() {
                 <>
                   <div>
                     <label className="block text-lg font-bold text-gray-700 mb-2">
-                      Installment<span className="text-red-500">*</span>
+                      Installments<span className="text-red-500">*</span>
                     </label>
                     <div className="flex space-x-6 mt-2">
                       <label className="flex items-center">
@@ -779,7 +774,7 @@ export default function App() {
           <section className="mb-8">
             <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Declaration & Disclaimer
+                Declaration
               </h3>
               <label className="flex items-start">
                 <input
@@ -790,10 +785,7 @@ export default function App() {
                   required
                 />
                 <span className="text-gray-800 font-medium">
-                  I hereby declare that all the information provided above is
-                  true and correct to the best of my knowledge. I understand
-                  that any false information may result in the cancellation of
-                  my admission.
+                  I hereby declare that all the information provided above is true and correct to the best of my knowledge. I understand that any false information may result in the cancellation of my admission.
                   <span className="text-red-500">*</span>
                 </span>
               </label>
