@@ -3241,7 +3241,7 @@ export default function App() {
 
               <div>
                 <label className="block text-lg font-bold text-gray-700 mb-2">
-                  eGCA Number
+                  eGCA ID
                   <span className="text-sm font-normal text-gray-500 ml-2">
                     (Leave Blank if Not Applicable)
                   </span>
@@ -3249,7 +3249,7 @@ export default function App() {
                 <input
                   name="egca"
                   value={form.egca}
-                  placeholder="Enter EGCA Number"
+                  placeholder="Enter EGCA ID"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 transition-all duration-200"
                   onChange={handleChange}
                 />
@@ -3886,7 +3886,7 @@ export default function App() {
               {form.dgcaPapersCleared === "Yes" && (
                 <div>
                   <label className="block text-lg font-bold text-gray-700 mb-2">
-                    If Yes, specify subjects:
+                    Specify Subjects:
                     <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
